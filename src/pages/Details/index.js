@@ -1,12 +1,36 @@
-import React from 'react'
-import {Text, View} from 'react-native'
+import React, {useState, useEffect} from 'react'
+import {Text, View, TextInput, TouchableOpacity} from 'react-native'
+import database from '../../config/firebaseconfig';
+import {styles} from './styles'
 
-export const Details = () => {
+export const Details = ({navigation, route}) => {
+  const [description, setDescription] = useState(route.params.description);
+  const IdTask = route.params.id
+
+  const editTask = (description, id) => {
+    database.collection("Tasks").doc(id).update({
+      description: description,
+    })
+    navigation.navigate("Task")
+  }
+
   return (
-    <View>
-      <Text>
-        Detail
-      </Text>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Ex: Fazer Café..."
+        onChangeText={setDescription}
+        value={description}
+      />
+      <TouchableOpacity
+        style={styles.buttonNewTask}
+        onPress={() => {
+          editTask(description, IdTask)
+        }}
+      >
+        <Text style={styles.iconButton}>Salvar</Text>
+      </TouchableOpacity>
     </View>
   )
 }
+
